@@ -110,6 +110,7 @@ def track(que_frame: multiprocessing.Queue, que_Id: multiprocessing.Queue, que_p
             for n_contour, contour in enumerate(contours):
 
                 x, y, w, h = cv2.boundingRect(contour)  # 該最大contour的(x,y)位置及長寬
+                # 太小的目標框不是物件
                 if w < 60:
                     continue
 
@@ -119,6 +120,7 @@ def track(que_frame: multiprocessing.Queue, que_Id: multiprocessing.Queue, que_p
             
             full_boxs = get_index(pre_boxs.copy(), boxes)
             
+            # 物體到達追蹤終點
             if full_boxs.shape[0] > 0 and full_boxs[0, 0] > 330:
                 # END - pop box
                 full_boxs = np.delete(full_boxs, 0, 0)                
@@ -128,6 +130,7 @@ def track(que_frame: multiprocessing.Queue, que_Id: multiprocessing.Queue, que_p
                 })
                 id_list.pop(0)
 
+            # 繪圖(實際運作時可刪除)
             for n, (loc, x, y, w, h) in enumerate(full_boxs):
                 x, y, w, h = int(x), int(y), int(w), int(h)
                 #cv2.drawContours(res_frame, contour, -1, (0, 255, 0), 2)
@@ -141,7 +144,7 @@ def track(que_frame: multiprocessing.Queue, que_Id: multiprocessing.Queue, que_p
                 cv2.putText(res_frame, f'ID', (x+30, y+30), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (255, 0, 0), 2)
                 cv2.putText(res_frame, f'{id_list[n]}', (x+30, y+70), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2)
 
-
+            # 發送新的位置
             for n, ((loc, *_), (pre_loc, *_)) in enumerate(zip(full_boxs, pre_boxs)):
                 if loc == pre_loc:
                     continue
