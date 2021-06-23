@@ -11,7 +11,8 @@ def main():
 
         if not ret:
             continue
-        #print(frame.shape)
+        
+        # 輸出
         out.write(frame)
         frame = cv2.resize(frame, (1500, 400), interpolation=cv2.INTER_AREA)
         cv2.imshow('', frame)

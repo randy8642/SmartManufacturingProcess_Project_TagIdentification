@@ -56,11 +56,34 @@
     ```
     
 3. 啟動伺服器\
-   `python server.py`
-4. 連接`http://<ip>/stream`即可取得http stram影像
-5. 若無人連接會自動斷開伺服器與攝影機的連線以省電，有人使用後則會恢復
-6. 若使用rtsp協定版本在伺服器與攝影機斷開後再次啟動會黑畫面一段時間，以因為攝影機正在啟動rtsp伺服器的緣故
-7. 目前版本的 `server.py` 可提供多人同時連線
+   `python server.py`\
+   會輸出這些內容代表成功啟動
+   ![server output](/img/server輸出.jpg)
+4. 對 `http://<ip>:5000/stream` 發出GET request即可取得http stram影像\
+會拿到如下圖已拼接後的影像
+![concat_image](/img/rawframe_concat.jpg)
+5. http stream 讀取範例如下,一般會將它放在另一thread中執行,並將影像傳輸回主程式處理
+    ```python
+    url = 'http://127.0.0.1:5000/stream'
+    r = requests.get(url, stream=True)
+    if(r.status_code == 200):
+        bytes = bytes()
+        for chunk in r.iter_content(chunk_size=1024):
+            bytes += chunk
+            a = bytes.find(b'\xff\xd8')
+            b = bytes.find(b'\xff\xd9')
+            if a != -1 and b != -1:
+                jpg = bytes[a:b+2]
+                bytes = bytes[b+2:]
+                frame = cv2.imdecode(np.fromstring(jpg, dtype=np.uint8), cv2.IMREAD_COLOR)
+                
+                # frame 即為單張影像
+    else:
+        print("Received unexpected status code {}".format(r.status_code)) 
+    ```
+6. 若無人連接會自動斷開伺服器與攝影機的連線以省電，有人使用後則會恢復
+7. 若使用rtsp協定版本在伺服器與攝影機斷開後再次啟動會黑畫面一段時間，以因為攝影機正在啟動rtsp伺服器的緣故
+8. 目前版本的 `server.py` 可提供多人同時連線
 
 ## 檔案說明
 - 相機連線  
@@ -100,6 +123,23 @@
         image = np.asarray(bytearray(resp.read()), dtype="uint8")
         image = cv2.imdecode(image, cv2.IMREAD_COLOR)
         ```
+    - 若要單獨使用 `cam_jpg` 以及 `cam_rtsp` ,可參照以下用法使用
+        ```python
+        from cam_jpg import Camera
+
+        cap = Camera()
+        cap.start()
+        while True:
+            ret, frame = cap.read()
+            # frame 為當次影格
+            # ret 代表是否成功,False代表沒有影格可輸出
+
+            if not ret:
+                continue
+
+            # 以下放要做的處理
+        cap.close()
+        ```
 
 - 測試讀取與拼接
     - `rawVideo_record.py`\
@@ -110,6 +150,8 @@
 
 - 影像伺服器
     - `server.py`\
-        該檔案為開啟伺服器之主程式\
-        **開啟方法** `python server.py`
+        該檔案為開啟伺服器之主程式
+        
+        
+        
 

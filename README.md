@@ -7,4 +7,5 @@
 - 模擬動畫\
 ![](img/模擬動畫.gif)
 
-##
+## 各子程式說明
+[QRcode Reader](/QRcode_reader)

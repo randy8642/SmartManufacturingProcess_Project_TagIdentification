@@ -23,8 +23,7 @@ def updateFrame():
 
     # READ JSON
     json_data = json.load(open('./config/cameras_config.json', 'r'))
-    info = json_data['camera']
-    location = json_data['locationPoint']
+    info = json_data['camera']   
     del json_data
 
     while True:        
