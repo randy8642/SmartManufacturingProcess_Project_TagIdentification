@@ -58,10 +58,10 @@
 3. 啟動伺服器\
    `python server.py`\
    會輸出這些內容代表成功啟動
-   ![server output](/img/server輸出.jpg)
+   ![server output](/VideoStreaming_Server/img/server輸出.jpg)
 4. 對 `http://<ip>:5000/stream` 發出GET request即可取得http stram影像\
 會拿到如下圖已拼接後的影像
-![concat_image](/img/rawframe_concat.jpg)
+![concat_image](/VideoStreaming_Server/img/rawframe_concat.jpg)
 5. http stream 讀取範例如下,一般會將它放在另一thread中執行,並將影像傳輸回主程式處理
     ```python
     url = 'http://127.0.0.1:5000/stream'
