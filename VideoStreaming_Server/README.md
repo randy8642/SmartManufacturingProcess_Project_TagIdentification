@@ -63,7 +63,8 @@
 4. 對 `http://<ip>:5000/stream` 發出 GET request 即可取得 http stram 影像\
    會拿到如下圖已拼接後的影像
    ![concat_image](/VideoStreaming_Server/img/rawframe_concat.jpg)
-5. http stream 讀取範例如下,一般會將它放在另一 thread 中執行,並將影像傳輸回主程式處理
+5. 額外說明
+     - http stream 讀取範例如下,一般會將它放在另一 thread 中執行,並將影像傳輸回主程式處理
 
    ```python
    url = 'http://127.0.0.1:5000/stream'
@@ -84,9 +85,9 @@
        print("Received unexpected status code {}".format(r.status_code))
    ```
 
-6. 若無人連接會自動斷開伺服器與攝影機的連線以省電，有人使用後則會恢復
-7. 若使用 rtsp 協定版本在伺服器與攝影機斷開後再次啟動會黑畫面一段時間，以因為攝影機正在啟動 rtsp 伺服器的緣故
-8. 目前版本的 `server.py` 可提供多人同時連線
+     - 若無人連接會自動斷開伺服器與攝影機的連線以省電，有人使用後則會恢復
+     - 若使用 rtsp 協定版本在伺服器與攝影機斷開後再次啟動會黑畫面一段時間，以因為攝影機正在啟動 rtsp 伺服器的緣故
+     - 目前版本的 `server.py` 可提供多人同時連線
 
 ## 檔案說明
 
