@@ -3,8 +3,8 @@
 
 ## 子程式說明
 - [QRcode 讀取](/QRcode_reader)
-- [物件追蹤伺服器](/ItemTracking)
-- [影像傳遞伺服器](/VideoStreaming_Server)
+- [物件追蹤伺服器 Tracking Server](/ItemTracking)
+- [影像傳遞伺服器 Video Server](/VideoStreaming_Server)
 
 ## 目標
 我們的目標為對輸送帶上的工件進行追蹤，以取得其在輸送帶上的即時位置，幫助了解產線狀況；另外我們也提供使用者透過瀏覽器連接並即時查看這些影像。
