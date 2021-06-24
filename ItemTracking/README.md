@@ -43,18 +43,30 @@
      ```
 3. 執行 `python main.py` 即可啟動
 
+## 執行結果
+- index追蹤
+![](img/located_index.gif)
+- 轉換為ID
+![](/img/located_ID.gif)
+- mqtt subscribe
+  - topic：`Label`
+  - message：`ID`
+- mqtt publish
+  - topic：`NckuMeCloudLab/Track`
+  - message：`ID, location`
 
-## 方法
 
-### 座標轉換
+## 實作方法
+
+- 座標轉換\
 先在輸送帶上測量幾個座標點的位置，再利用內插法計算出物體目前的位置
-![](/ItemTracking/img/輸送帶位置.jpg)
+![](/img/輸送帶位置.jpg)
 
 
-### 目標追蹤
+- 目標追蹤\
 為了避免目標在影格遺失的狀況造成物體順序錯誤，我們設定讓目標框只在特定範圍內更新，若距離太遠則當作是不同物體(即會給定新的 index 給該目標框)\
 而在物體中途被取走進行加工的部份，我們可以透過調整該物體框的位置，讓該物體在回到輸送帶時也能夠正確的繼續追蹤\
-![](/ItemTracking/img/追蹤示意圖.jpg)
+![](/img/追蹤示意圖.jpg)
 
 
 ## 程式說明
