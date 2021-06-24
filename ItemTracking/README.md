@@ -48,12 +48,6 @@
 
 ### 座標轉換
 先在輸送帶上測量幾個座標點的位置，再利用內插法計算出物體目前的位置
-$$ 
-Y = Real \quad Location, \quad X = Pixel \quad Location
-$$
-$$
-Y = Y_{lower} + \frac{X - X_{lower}}{X_{upper} - X_{lower}} \times (Y_{upper} - Y_{lower})
-$$
 ![](/ItemTracking/img/輸送帶位置.jpg)
 
 
