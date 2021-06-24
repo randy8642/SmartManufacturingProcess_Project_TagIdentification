@@ -147,18 +147,17 @@
   # 距離20cm內視為同物體的移動 
   THRESHOLD = 20 
   ```
-  3. 判斷是否為第一個物體\
-   - **是** 則直接新增
-    ```python
-    for loc, *box in new_xs: 
-        # 物體在50cm(定義的開始位置)內才會新增 
-        if loc < 50: 
-            result = np.concatenate((result, np.expand_dims([loc, *box], axis=0)), axis=0) 
-    ```
-
-    - **否** 則考慮追蹤
-    ```python
-    for loc, *box in new_xs:
+  3. 判斷是否為第一個物體
+     - **是** 則直接新增
+        ```python
+        for loc, *box in new_xs: 
+            # 物體在50cm(定義的開始位置)內才會新增 
+            if loc < 50: 
+                result = np.concatenate((result, np.expand_dims([loc, *box], axis=0)), axis=0) 
+        ```
+     - **否** 則考慮追蹤
+        ```python
+        for loc, *box in new_xs:
             # 計算直線距離
             dis = [get_distance(loc, pre) for pre, *_ in pre_result]
             # 尋找最小距離
@@ -172,7 +171,7 @@
                 # 物體在50cm(定義的開始位置)內才會新增
                 if loc < 50:
                     result = np.concatenate((result, np.expand_dims([loc, *box], axis=0)), axis=0)
-    ```
+        ```
 
 - 座標轉換\
 `functions.py` / `getlocation()` 
