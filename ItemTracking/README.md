@@ -128,39 +128,40 @@
 
 - 物體追蹤\
 `functions.py` / `git_index()`
-    - 輸入參數格數\
+    1. 輸入參數格數\
     `pre_result` ： `[[location, x, y, w, h], ...]`\
     `new_xs` ： `[[location, x, y, w, h], ...]`
-    - 設定最小閥值
-    ```python
-    # 距離20cm內視為同物體的移動
-    THRESHOLD = 20
-    ```
-    - 判斷是否為第一個物體\
-    **是** 則直接新增
-    ```python
-    for loc, *box in new_xs:
-        # 物體在50cm(定義的開始位置)內才會新增
-        if loc < 50:
-            result = np.concatenate((result, np.expand_dims([loc, *box], axis=0)), axis=0)
-    ```
-    **否** 則考慮追蹤
-    ```python
-    for loc, *box in new_xs:
-            # 計算直線距離
-            dis = [get_distance(loc, pre) for pre, *_ in pre_result]
-            # 尋找最小距離
-            min_index = np.argmin(dis)
+    2. 設定最小閥值
+        ```python
+        # 距離20cm內視為同物體的移動
+        THRESHOLD = 20
+        ```
+    3. 判斷是否為第一個物體\
+       - **是** 則直接新增
+        ```python
+        for loc, *box in new_xs:
+            # 物體在50cm(定義的開始位置)內才會新增
+            if loc < 50:
+                result = np.concatenate((result, np.expand_dims([loc, *box], axis=0)), axis=0)
+        ```
 
-            if dis[min_index] < THRESHOLD:                
-                # 發現新舊物體框之間的距離小於閥值，將更新最近的物體框
-                result[min_index, :] = loc, *box
-            else:
-                # 新物體框附近未有已存在的物體框，因此當作是新的物體進入追蹤範圍
-                # 物體在50cm(定義的開始位置)內才會新增
-                if loc < 50:
-                    result = np.concatenate((result, np.expand_dims([loc, *box], axis=0)), axis=0)
-    ```
+        - **否** 則考慮追蹤
+        ```python
+        for loc, *box in new_xs:
+                # 計算直線距離
+                dis = [get_distance(loc, pre) for pre, *_ in pre_result]
+                # 尋找最小距離
+                min_index = np.argmin(dis)
+
+                if dis[min_index] < THRESHOLD:                
+                    # 發現新舊物體框之間的距離小於閥值，將更新最近的物體框
+                    result[min_index, :] = loc, *box
+                else:
+                    # 新物體框附近未有已存在的物體框，因此當作是新的物體進入追蹤範圍
+                    # 物體在50cm(定義的開始位置)內才會新增
+                    if loc < 50:
+                        result = np.concatenate((result, np.expand_dims([loc, *box], axis=0)), axis=0)
+        ```
 
 
 
@@ -171,14 +172,14 @@
     ```python
     locationPoints = json.load(open('./data/location.json', mode='r'))['locationPoint']
     ```
-    2. 判斷目標是否超出追蹤範圍
+    1. 判斷目標是否超出追蹤範圍
     ```python
     if x_pixel > locationPoints[0][1]:
         return -1
     if x_pixel < locationPoints[-1][1]:
         return -1
     ```
-    3. 由檔案中尋找最近的標點
+    1. 由檔案中尋找最近的標點
     ```python
     upperIndex, lowerIndex = -1, -1
     for n in range(len(locationPoints)):
@@ -194,7 +195,7 @@
     upperReal, upperPixel = locationPoints[upperIndex]
     lowerReal, lowerPixel = locationPoints[lowerIndex]
     ```
-    4. 使用內插法計算估計位置
+    1. 使用內插法計算估計位置
     ```python
     result = lowerReal + (x_pixel - lowerPixel)/(upperPixel - lowerPixel) * (upperReal - lowerReal)
     ```
