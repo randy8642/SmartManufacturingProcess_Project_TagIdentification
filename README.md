@@ -3,7 +3,7 @@
 
 ## 子程式說明
 - [QRcode 讀取](/QRcode_reader)
-- [物件追蹤](/ItemTracking)
+- [物件追蹤伺服器](/ItemTracking)
 - [影像傳遞伺服器](/VideoStreaming_Server)
 
 ## 目標
