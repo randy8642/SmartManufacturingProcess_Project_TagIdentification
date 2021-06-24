@@ -53,7 +53,7 @@
    sched.start()
   ```
   - 展示
-  ![qrcode_mqtt](/img/qrcode_mqtt.gif)
+  ![qrcode_mqtt](/QRcode_reader/img/qrcode_mqtt.gif)
 
 - qrcode讀取  
   - 作法
@@ -73,4 +73,4 @@
       ...
   ```
   - 結果圖
-  ![qrcode_detect](/img/qrcode_detect.gif)
+  ![qrcode_detect](/QRcode_reader/img/qrcode_detect.gif)
