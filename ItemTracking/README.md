@@ -47,7 +47,8 @@
 
 - MQTT Client\
   負責處理 mqtt 的 publish 和 subsrcibe
-  ```python
+
+  ````python
   def mqtt_client(que_id: multiprocessing.Queue, que_publish: multiprocessing.Queue):
   def on_connect(client, userdata, flags, rc):
   print("Connected with result code " + str(rc))
@@ -79,9 +80,12 @@
                   client.publish(topic, payload=msg, qos=0)
       ```
 
+  ````
+
 - http request\
   持續擷取**影像傳遞伺服器**輸出的影像
-  ```python
+
+  ````python
   def get_frame(que: multiprocessing.Queue):
 
           url = 'http://<ip>/stream'
@@ -108,98 +112,82 @@
 
       ```
 
+  ````
+
 - 物件定位
 
   ```python
-  ...
-  # 將圖片轉為灰階
-  next_img = cv2.cvtColor(res_frame, cv2.COLOR_BGR2GRAY)
-  ...
-  # 計算當前圖片與第一張圖片的差異
-  vis = cv2.absdiff(next_img, pre_img)
+  def track(que_frame: multiprocessing.Queue, que_Id: multiprocessing.Queue, que_publish: multiprocessing.Queue):
+      ...
+      while True:
+          ...
+          if not que_frame.empty():
+                ...
 
-  # 設定閥值
-  ret, th = cv2.threshold(vis, 50, 255, cv2.THRESH_BINARY)
-  # 邊緣膨脹(讓目標檢測更容易)
-  dilated = cv2.dilate(th, None, iterations=1)
-  # 尋找物體框
-  contours, hierarchy = cv2.findContours(dilated, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+                # 將圖片轉為灰階
+                next_img = cv2.cvtColor(res_frame, cv2.COLOR_BGR2GRAY)
+                ...
+                # 計算當前圖片與第一張圖片的差異
+                vis = cv2.absdiff(next_img, pre_img)
+
+                # 設定閥值
+                ret, th = cv2.threshold(vis, 50, 255, cv2.THRESH_BINARY)
+                # 邊緣膨脹(讓目標檢測更容易)
+                dilated = cv2.dilate(th, None, iterations=1)
+                # 尋找物體框
+                contours, hierarchy = cv2.findContours(dilated, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
   ```
 
 - 物體追蹤\
-`functions.py` / `git_index()`
-    1. 輸入參數格數\
-    `pre_result` ： `[[location, x, y, w, h], ...]`\
-    `new_xs` ： `[[location, x, y, w, h], ...]`
-    2. 設定最小閥值
-        ```python
-        # 距離20cm內視為同物體的移動
-        THRESHOLD = 20
-        ```
-    3. 判斷是否為第一個物體\
-       - **是** 則直接新增
-        ```python
-        for loc, *box in new_xs:
-            # 物體在50cm(定義的開始位置)內才會新增
-            if loc < 50:
-                result = np.concatenate((result, np.expand_dims([loc, *box], axis=0)), axis=0)
-        ```
+  `functions.py` / `git_index()` 1. 輸入參數格數\
+   `pre_result` ： `[[location, x, y, w, h], ...]`\
+   `new_xs` ： `[[location, x, y, w, h], ...]` 2. 設定最小閥值
+  `python # 距離20cm內視為同物體的移動 THRESHOLD = 20 ` 3. 判斷是否為第一個物體\
+   - **是** 則直接新增
+  `python for loc, *box in new_xs: # 物體在50cm(定義的開始位置)內才會新增 if loc < 50: result = np.concatenate((result, np.expand_dims([loc, *box], axis=0)), axis=0) `
 
-        - **否** 則考慮追蹤
-        ```python
-        for loc, *box in new_xs:
-                # 計算直線距離
-                dis = [get_distance(loc, pre) for pre, *_ in pre_result]
-                # 尋找最小距離
-                min_index = np.argmin(dis)
+          - **否** 則考慮追蹤
+          ```python
+          for loc, *box in new_xs:
+                  # 計算直線距離
+                  dis = [get_distance(loc, pre) for pre, *_ in pre_result]
+                  # 尋找最小距離
+                  min_index = np.argmin(dis)
 
-                if dis[min_index] < THRESHOLD:                
-                    # 發現新舊物體框之間的距離小於閥值，將更新最近的物體框
-                    result[min_index, :] = loc, *box
-                else:
-                    # 新物體框附近未有已存在的物體框，因此當作是新的物體進入追蹤範圍
-                    # 物體在50cm(定義的開始位置)內才會新增
-                    if loc < 50:
-                        result = np.concatenate((result, np.expand_dims([loc, *box], axis=0)), axis=0)
-        ```
-
-
-
+                  if dis[min_index] < THRESHOLD:
+                      # 發現新舊物體框之間的距離小於閥值，將更新最近的物體框
+                      result[min_index, :] = loc, *box
+                  else:
+                      # 新物體框附近未有已存在的物體框，因此當作是新的物體進入追蹤範圍
+                      # 物體在50cm(定義的開始位置)內才會新增
+                      if loc < 50:
+                          result = np.concatenate((result, np.expand_dims([loc, *box], axis=0)), axis=0)
+          ```
 
 - 座標轉換\
-`functions.py` / `getlocation()`
-    1. 由 `/data/location.json` 讀取位置參數
-    ```python
-    locationPoints = json.load(open('./data/location.json', mode='r'))['locationPoint']
-    ```
-    1. 判斷目標是否超出追蹤範圍
-    ```python
-    if x_pixel > locationPoints[0][1]:
-        return -1
-    if x_pixel < locationPoints[-1][1]:
-        return -1
-    ```
-    1. 由檔案中尋找最近的標點
-    ```python
-    upperIndex, lowerIndex = -1, -1
-    for n in range(len(locationPoints)):
-        if locationPoints[n][1] == x_pixel:
-            return locationPoints[n][0]
+  `functions.py` / `getlocation()` 1. 由 `/data/location.json` 讀取位置參數
+  `python locationPoints = json.load(open('./data/location.json', mode='r'))['locationPoint'] ` 1. 判斷目標是否超出追蹤範圍
+  `python if x_pixel > locationPoints[0][1]: return -1 if x_pixel < locationPoints[-1][1]: return -1 ` 1. 由檔案中尋找最近的標點
+  ```python
+  upperIndex, lowerIndex = -1, -1
+  for n in range(len(locationPoints)):
+  if locationPoints[n][1] == x_pixel:
+  return locationPoints[n][0]
 
-        if locationPoints[n][1] > x_pixel:
-            upperIndex = n
+          if locationPoints[n][1] > x_pixel:
+              upperIndex = n
 
-        if locationPoints[n][1] < x_pixel:
-            lowerIndex = n
-            break
-    upperReal, upperPixel = locationPoints[upperIndex]
-    lowerReal, lowerPixel = locationPoints[lowerIndex]
-    ```
-    1. 使用內插法計算估計位置
-    ```python
-    result = lowerReal + (x_pixel - lowerPixel)/(upperPixel - lowerPixel) * (upperReal - lowerReal)
-    ```
-
+          if locationPoints[n][1] < x_pixel:
+              lowerIndex = n
+              break
+      upperReal, upperPixel = locationPoints[upperIndex]
+      lowerReal, lowerPixel = locationPoints[lowerIndex]
+      ```
+      1. 使用內插法計算估計位置
+      ```python
+      result = lowerReal + (x_pixel - lowerPixel)/(upperPixel - lowerPixel) * (upperReal - lowerReal)
+      ```
 
 ## 方法
 
