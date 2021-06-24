@@ -20,7 +20,7 @@ ap.add_argument("-o", "--output", type=str, default="barcodes.csv",
 args = vars(ap.parse_args())
 
 # 設定MQTT傳輸的IP、port及Topic，並連線
-_g_cst_ToMQTTTopicServerIP = "140.116.155.190"
+_g_cst_ToMQTTTopicServerIP = "127.0.0.1"
 _g_cst_ToMQTTTopicServerPort = 1883
 _g_cst_MQTTTopicName = "Label"
 mqttc = mqtt.Client("python_pub")
