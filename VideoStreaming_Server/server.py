@@ -4,7 +4,7 @@ import threading
 import time
 import numpy as np
 import json
-from cam_rtsp import Camera
+from Camera import rtsp_cam as Cam
 
 
 app = Flask(__name__)
@@ -15,7 +15,7 @@ info = ''
 
 def updateFrame():
     print('start thread')
-    cap = Camera()    
+    cap = Cam()    
 
     global now_frame
     global readTime
@@ -23,7 +23,8 @@ def updateFrame():
 
     # READ JSON
     json_data = json.load(open('./config/cameras_config.json', 'r'))
-    info = json_data['camera']   
+    info = json_data['camera']
+    camera_cnt = len(info)   
     del json_data
 
     while True:        
@@ -40,13 +41,16 @@ def updateFrame():
         if cap.starting:
             success, rawframe = cap.read()
 
-            images = [np.zeros([480, 640, 3], dtype=np.uint8) for _ in range(len(info))]
+            if not success:
+                continue
+            images = [None] * camera_cnt
+            single_width = rawframe.shape[1] // camera_cnt
             for n in range(len(info)):
-                images[n] = rawframe[:, n * 640:(n + 1) * 640, :]
+                images[n] = rawframe[:, n * single_width:(n + 1) * single_width, :]
             frame = concatImage(images)
 
-            if success:            
-                now_frame = frame        
+            # 更新影格     
+            now_frame = frame        
 
 def gen_frames():  
     global now_frame
