@@ -199,6 +199,7 @@
                 if now_frame is None:
                     break
                 # 讀取影格並發送
+                # now_frame 為儲存的影格
                 ret, buffer = cv2.imencode('.jpg', now_frame)
                 frame = buffer.tobytes()
                 yield (b'--frame\r\n'
