@@ -175,11 +175,11 @@
     ```
 
 - 座標轉換\
-  `functions.py` / `getlocation()` 
+`functions.py` / `getlocation()` 
   1. 由 `/data/location.json` 讀取位置參數
-  ```python
-  locationPoints = json.load(open('./data/location.json', mode='r'))['locationPoint'] 
-  ``` 
+    ```python
+    locationPoints = json.load(open('./data/location.json', mode='r'))['locationPoint'] 
+    ``` 
   2. 判斷目標是否超出追蹤範圍
     ```python
     if x_pixel > locationPoints[0][1]: 
@@ -188,25 +188,25 @@
         return -1 
     ``` 
   3. 由檔案中尋找最近的標點
-  ```python
-  upperIndex, lowerIndex = -1, -1
-  for n in range(len(locationPoints)):
-  if locationPoints[n][1] == x_pixel:
-  return locationPoints[n][0]
+    ```python
+    upperIndex, lowerIndex = -1, -1
+    for n in range(len(locationPoints)):
+        if locationPoints[n][1] == x_pixel:
+            return locationPoints[n][0]
 
-          if locationPoints[n][1] > x_pixel:
-              upperIndex = n
+        if locationPoints[n][1] > x_pixel:
+            upperIndex = n
 
-          if locationPoints[n][1] < x_pixel:
-              lowerIndex = n
-              break
-      upperReal, upperPixel = locationPoints[upperIndex]
-      lowerReal, lowerPixel = locationPoints[lowerIndex]
-      ```
-      1. 使用內插法計算估計位置
-      ```python
-      result = lowerReal + (x_pixel - lowerPixel)/(upperPixel - lowerPixel) * (upperReal - lowerReal)
-      ```
+        if locationPoints[n][1] < x_pixel:
+            lowerIndex = n
+            break
+    upperReal, upperPixel = locationPoints[upperIndex]
+    lowerReal, lowerPixel = locationPoints[lowerIndex]
+    ```
+  4. 使用內插法計算估計位置
+    ```python
+    result = lowerReal + (x_pixel - lowerPixel)/(upperPixel - lowerPixel) * (upperReal - lowerReal)
+    ```
 
 ## 方法
 
