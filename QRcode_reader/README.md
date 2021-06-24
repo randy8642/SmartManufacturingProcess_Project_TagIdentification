@@ -13,7 +13,7 @@
 
 ## 使用說明
 
-1. 街上 USB 攝影機並安裝驅動程式
+1. 接上 USB 攝影機並安裝驅動程式
 2. 開啟 cmd 並輸入 `python main.py --output barcodes.csv`
 
 
