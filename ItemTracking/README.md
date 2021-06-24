@@ -2,12 +2,15 @@
 由http取得影像後，對輸送帶上方的物件進行追蹤
 
 ## 環境安裝
-- 使用 `pipenv` 套件架設
-- 執行 `pipenv install` 可安裝相關套件
+使用 `pipenv` 套件架設
+1. 安裝pipenv\
+`pip install pipenv`
+2. 安裝相關套件\
+`pipenv install`
 
 
 ## 使用說明
-1. 更改 `location.json` 中輸送帶和實際座標的對應表格
+1. 更改 `data/location.json` 中輸送帶和實際座標的對應表格
    - 格式如下
         ```json
         {
@@ -24,11 +27,17 @@
         }
         ```
     - `locationPoint` 中的每一列為 `[實際座標, pixel]`
-2. 更改**mqtt ip 以及 port**\
-   在 `main.py` 中 `mqtt_client` 函式內
-   ```python
-   client.connect(ip, port, 60)
-   ```
+2. 更改 `data/connect_config.json` 中**mqtt**和**httpUrl**
+   - 格式如下
+        ```json
+        {
+            "mqtt": {
+                "ip": "127.0.0.1",
+                "port": 1883
+            },
+            "http url": "http://192.168.1.1/stream"
+        }
+        ```
    
 3. 執行 `python main.py` 即可啟動
 

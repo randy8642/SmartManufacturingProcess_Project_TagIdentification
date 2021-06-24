@@ -3,8 +3,7 @@ import numpy as np
 from numpy.lib.shape_base import expand_dims
 
 
-locationPoints = json.load(
-    open('./location.json', mode='r'))['locationPoint']
+locationPoints = json.load(open('./data/location.json', mode='r'))['locationPoint']
 
 
 def getlocation(x_pixel: int):
