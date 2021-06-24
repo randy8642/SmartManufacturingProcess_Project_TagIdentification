@@ -43,76 +43,96 @@
      ```
 3. 執行 `python main.py` 即可啟動
 
+
+## 方法
+
+### 座標轉換
+
+![](/ItemTracking/img/輸送帶位置.jpg)
+先在輸送帶上測量幾個座標點的位置，在利用內插法計算出物體目前的位置
+
+### 目標追蹤
+
+為了避免目標在影格遺失的狀況造成物體順序錯誤，我們設定讓目標框只在特定範圍內更新，若距離太遠則當作是不同物體，即會給定新的 index 給該目標框
+![](/ItemTracking/img/追蹤示意圖.jpg)
+而在物體中途被取走逕行加工的部份，我們可以透過調整該物體框的位置，讓該物體在回到輸送帶時也能夠正確的繼續追蹤
+
 ## 程式說明
 
 - MQTT Client\
-  負責處理 mqtt 的 publish 和 subsrcibe
+  負責處理 mqtt 的 publish 和 subsrcibe\
+  `main.py` / `mqtt_client()`
 
-  ````python
-  def mqtt_client(que_id: multiprocessing.Queue, que_publish: multiprocessing.Queue):
-  def on_connect(client, userdata, flags, rc):
-  print("Connected with result code " + str(rc))
-
-              client.subscribe("Label")
-
-          def on_message(client, userdata, msg):
-              # 轉換編碼utf-8
-              id_msg = msg.payload.decode('utf-8')
-              que_id.put(id_msg)
-
-          client = mqtt.Client()
-          client.on_connect = on_connect
-          client.on_message = on_message
-          client.username_pw_set("<username>", "<password>")
-          client.connect(ip, port, 60)
-
-
-          while True:
-              # 從broker接收訊息
-              client.loop()
-
-              # 當有需要publish時執行
-              if not que_publish.empty():
-                  res = que_publish.get()
-                  topic = res['topic']
-                  msg = res['msg']
-
-                  client.publish(topic, payload=msg, qos=0)
+  1. 定義連線時要做的項目
+      ```python
+      def on_connect(client, userdata, flags, rc):
+          print("Connected with result code " + str(rc))
+          client.subscribe("Label")
       ```
 
-  ````
-
-- http request\
-  持續擷取**影像傳遞伺服器**輸出的影像
-
-  ````python
-  def get_frame(que: multiprocessing.Queue):
-
-          url = 'http://<ip>/stream'
-
-          while True:
-              time.sleep(0.5)
-              r = requests.get(url, stream=True)
-              if(r.status_code == 200):
-                  bytes = bytes()
-                  for chunk in r.iter_content(chunk_size=1024):
-                      bytes += chunk
-                      a = bytes.find(b'\xff\xd8')
-                      b = bytes.find(b'\xff\xd9')
-                      if a != -1 and b != -1:
-                          jpg = bytes[a:b+2]
-                          bytes = bytes[b+2:]
-                          frame = cv2.imdecode(np.fromstring(
-                              jpg, dtype=np.uint8), cv2.IMREAD_COLOR)
-
-                          # 將影格(frame)傳遞給處理程序
-                          que.put(frame)
-              else:
-                  print(f"Received unexpected status code {r.status_code}")
-
+  2. 定義接收到broker來的訊息時要做的項目
+      ```python
+      def on_message(client, userdata, msg):
+          # 解碼訊息為utf-8格式
+          id_msg = msg.payload.decode('utf-8')
+          # 傳遞給其他程序
+          que_id.put(id_msg)
       ```
 
-  ````
+  3. 連線mqtt broker
+      ```python
+      client = mqtt.Client()
+      client.on_connect = on_connect
+      client.on_message = on_message
+      client.username_pw_set("<username>", "<password>")
+      client.connect(ip, port, 60)
+      ```
+
+  4. 持續確認broker端是否有發出訊息，並在有訊息需要送出時將其publish出去
+      ```python
+      while True:
+          # 從broker接收訊息
+          client.loop()
+
+          # 當有需要publish時執行
+          if not que_publish.empty():
+              res = que_publish.get()
+              topic = res['topic']
+              msg = res['msg']
+
+              client.publish(topic, payload=msg, qos=0)
+      ```
+
+
+- 擷取影像\
+  持續擷取**影像傳遞伺服器**輸出的影像\
+  `main.py` / `get_frame()`
+
+    ```python
+    def get_frame(que: multiprocessing.Queue):
+
+        url = 'http://<ip>/stream'
+
+        while True:
+            time.sleep(0.5)
+            r = requests.get(url, stream=True)
+            if(r.status_code == 200):
+                bytes = bytes()
+                for chunk in r.iter_content(chunk_size=1024):
+                    bytes += chunk
+                    a = bytes.find(b'\xff\xd8')
+                    b = bytes.find(b'\xff\xd9')
+                    if a != -1 and b != -1:
+                        jpg = bytes[a:b+2]
+                        bytes = bytes[b+2:]
+                        frame = cv2.imdecode(np.fromstring(jpg, dtype=np.uint8), cv2.IMREAD_COLOR)
+
+                        # 將影格(frame)傳遞給處理程序
+                        que.put(frame)
+            else:
+                print(f"Received unexpected status code {r.status_code}")
+
+    ```
 
 - 物件定位
 
@@ -142,7 +162,7 @@
   1. 輸入參數格數\
    `pre_result` ： `[[location, x, y, w, h], ...]`\
    `new_xs` ： `[[location, x, y, w, h], ...]` 
-   2. 設定最小閥值
+   1. 設定最小閥值
   ```python
   # 距離20cm內視為同物體的移動 
   THRESHOLD = 20 
@@ -207,15 +227,4 @@
     result = lowerReal + (x_pixel - lowerPixel)/(upperPixel - lowerPixel) * (upperReal - lowerReal)
     ```
 
-## 方法
 
-### 座標轉換
-
-![](/ItemTracking/img/輸送帶位置.jpg)
-先在輸送帶上測量幾個座標點的位置，在利用內插法計算出物體目前的位置
-
-### 目標追蹤
-
-為了避免目標在影格遺失的狀況造成物體順序錯誤，我們設定讓目標框只在特定範圍內更新，若距離太遠則當作是不同物體，即會給定新的 index 給該目標框
-![](/ItemTracking/img/追蹤示意圖.jpg)
-而在物體中途被取走逕行加工的部份，我們可以透過調整該物體框的位置，讓該物體在回到輸送帶時也能夠正確的繼續追蹤
