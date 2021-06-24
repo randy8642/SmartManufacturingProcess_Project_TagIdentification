@@ -219,7 +219,7 @@
       - 影像合併
 
         - 合併結果圖
-          ![](/img/拼接.gif)
+          ![](/VideoStreaming_Server/img/拼接.gif)
         - 做法
 
         ```python
