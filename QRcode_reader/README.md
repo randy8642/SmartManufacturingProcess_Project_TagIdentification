@@ -52,7 +52,7 @@
    sched.add_job(lambda: my_job(), 'interval', seconds=1)
    sched.start()
   ```
-  - 展示
+  - 展示\
   ![qrcode_mqtt](/QRcode_reader/img/qrcode_mqtt.gif)
 
 - qrcode讀取  
@@ -72,5 +72,5 @@
       barcodeType = barcode.type
       ...
   ```
-  - 結果圖
+  - 結果圖\
   ![qrcode_detect](/QRcode_reader/img/qrcode_detect.gif)
