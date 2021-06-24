@@ -116,15 +116,13 @@
 
 - 物件定位
 
-  ```python
-  def track(que_frame: multiprocessing.Queue, que_Id: multiprocessing.Queue, que_publish: multiprocessing.Queue):
+    ```python
+    def track(que_frame: multiprocessing.Queue, que_Id: multiprocessing.Queue, que_publish: multiprocessing.Queue):
       ...
       while True:
           ...
           if not que_frame.empty():
                 ...
-
-
                 # 將圖片轉為灰階
                 next_img = cv2.cvtColor(res_frame, cv2.COLOR_BGR2GRAY)
                 ...
@@ -137,7 +135,7 @@
                 dilated = cv2.dilate(th, None, iterations=1)
                 # 尋找物體框
                 contours, hierarchy = cv2.findContours(dilated, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-  ```
+    ```
 
 - 物體追蹤\
   `functions.py` / `git_index()` 1. 輸入參數格數\
