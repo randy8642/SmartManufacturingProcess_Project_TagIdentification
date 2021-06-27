@@ -3,13 +3,12 @@
 由 http 取得影像後，對輸送帶上方的物件進行追蹤
 
 ## 環境安裝
-
-使用 `pipenv` 套件架設
-
-1. 安裝 pipenv\
-   `pip install pipenv`
-2. 安裝相關套件\
-   `pipenv install`
+- python 版本 `3.9.2`
+- 使用 `pipenv` 套件架設
+    1. 安裝pipenv\
+    `pip install pipenv`
+    2. 安裝相關套件\
+    `pipenv install`
 
 ## 使用說明
 

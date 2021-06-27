@@ -3,9 +3,12 @@
 單一 ESP32-CAM 一次只能負擔一個連線，為了能讓所有服務都可以取得影像，因此另架設一台伺服器收集並處理影像，再透過 http 提供所有使用者影像串流服務
 
 ## 環境安裝
-
+- python 版本 `3.9.2`
 - 使用 `pipenv` 套件架設
-- 執行 `pipenv install` 可安裝相關套件
+    1. 安裝pipenv\
+    `pip install pipenv`
+    2. 安裝相關套件\
+    `pipenv install`
 
 ## 使用說明
 

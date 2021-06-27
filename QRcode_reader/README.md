@@ -5,11 +5,12 @@
 使用 usb 攝影機對工件上的 QRcode 進行讀取，並透過 mqtt 傳遞給需要的系統
 
 ## 環境安裝
-使用 `pipenv` 套件架設
-1. 安裝pipenv\
-`pip install pipenv`
-2. 安裝相關套件\
-`pipenv install`
+- python 版本 `3.9.2`
+- 使用 `pipenv` 套件架設
+    1. 安裝pipenv\
+    `pip install pipenv`
+    2. 安裝相關套件\
+    `pipenv install`
 
 ## 使用說明
 
