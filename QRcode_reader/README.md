@@ -18,7 +18,7 @@
 2. 開啟 cmd 並輸入 `python main.py --output barcodes.csv`
 
 
-## 檔案說明
+## 程式說明
 
 - mqtt
 
