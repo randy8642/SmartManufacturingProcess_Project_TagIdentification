@@ -1,4 +1,4 @@
-# UI介面設計
+# UI 介面設計
 
 ## 說明
 使用 QT Designer 等相關 UI 設計之軟體，把所需的的介面輪廓設計出來，再把每
@@ -38,7 +38,7 @@
             args = vars(ap.parse_args())
         ```
     - Demonstrate
-    ![](/img/a.gif)
+    ![](/UI_design/img/a.gif)
 
 - Label
     - Display video
