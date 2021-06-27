@@ -1,8 +1,7 @@
 # UI 介面設計
 
 ## 說明
-使用 QT Designer 等相關 UI 設計之軟體，把所需的的介面輪廓設計出來，再把每
-個 Button、Label、Text 之作用，套入所需之程式碼
+使用 QT Designer 等相關 UI 設計之軟體，把所需的的介面輪廓設計出來，再把每個 Button、Label、Text 之作用，套入所需之程式碼
 
 ## 環境安裝
 - python 版本 `3.9.2`
