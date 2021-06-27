@@ -29,7 +29,7 @@
         self.spbtn.clicked.connect(self.sp)
         ```
     - Define the button of function
-    定義當典籍 button 時，會出現什麼樣的功能
+    定義當點擊 button 時，會出現什麼樣的功能
         ```python
         def cam1(self):
             ap = argparse.ArgumentParser()
