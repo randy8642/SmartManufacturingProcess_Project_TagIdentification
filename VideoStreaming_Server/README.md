@@ -250,5 +250,3 @@
 
             return cv2.hconcat(images)
         ```
-
-    -
