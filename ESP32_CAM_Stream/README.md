@@ -1,6 +1,6 @@
 # ESP32-CAM 影像傳輸程式
 
-## 參考資料
+## 程式碼來源
 1. [ESP32-CAM Video Streaming Web Server (works with Home Assistant) | Random Nerd Tutorials](https://randomnerdtutorials.com/esp32-cam-video-streaming-web-server-camera-home-assistant/)
 2. [RTSP ESP32CAM qnap監視器 錄影測試 @ 夜市小霸王 :: 痞客邦 :: (pixnet.net)](https://youyouyou.pixnet.net/blog/post/120778494-rtsp-esp32cam-qnap%E7%9B%A3%E8%A6%96%E5%99%A8-%E9%8C%84%E5%BD%B1%E6%B8%AC%E8%A9%A6)
 
