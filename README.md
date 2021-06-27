@@ -1,4 +1,4 @@
-# 料件追蹤與標籤辨識
+# SmartManufacturingProcess_Project_TagIdentification 物聯網與大數據於智慧製造應用_期末專案_料件追蹤與標籤辨識
 1092_物聯網與大數據於智慧製造應用 第2組 期末專案
 
 ## 子程式說明
